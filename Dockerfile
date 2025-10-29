@@ -1,23 +1,22 @@
-# Use official Node image
 FROM node:18-alpine
 
-# Set working directory
 WORKDIR /app
-
-# Copy files
-COPY . .
 
 # Install pnpm globally
 RUN npm install -g pnpm
 
-# Install dependencies
+# Copy dependency files first for caching
+COPY package.json pnpm-lock.yaml ./
+
+# Install deps
 RUN pnpm install
 
-# Build the Next.js app
-RUN pnpm run build
+# Copy rest of the project
+COPY . .
 
-# Expose port 3000
+# Build the app (showing detailed errors)
+RUN pnpm run build || { echo "❌ BUILD FAILED"; cat /app/.next/trace; exit 1; }
+
 EXPOSE 3000
 
-# Start the app
 CMD ["pnpm", "start"]

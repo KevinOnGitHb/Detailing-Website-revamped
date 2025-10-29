@@ -1,20 +1,23 @@
-# Use lightweight Node.js base image
+# Use official Node image
 FROM node:18-alpine
 
 # Set working directory
 WORKDIR /app
 
-# Copy everything
+# Copy files
 COPY . .
 
-# Install dependencies
-RUN npm install
+# Install pnpm globally
+RUN npm install -g pnpm
 
-# Build Next.js app
-RUN npm run build
+# Install dependencies
+RUN pnpm install
+
+# Build the Next.js app
+RUN pnpm run build
 
 # Expose port 3000
 EXPOSE 3000
 
-# Start app
-CMD ["npm", "start"]
+# Start the app
+CMD ["pnpm", "start"]
